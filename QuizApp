@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #question {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        #next-btn, #restart-btn {
+            display: none;
+        }
+
+        #result-container {
+            display: none;
+        }
+
+        #result {
+            font-size: 1.5em;
+            margin: 20px 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Quiz App</h1>
+        <div id="question-container">
+            <div id="question"></div>
+            <div id="answer-buttons" class="btn-container"></div>
+        </div>
+        <button id="next-btn" class="btn">Next Question</button>
+        <div id="result-container">
+            <h2 id="result"></h2>
+            <button id="restart-btn" class="btn">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "What is the capital of France?",
+                answers: [
+                    { text: "Paris", correct: true },
+                    { text: "London", correct: false },
+                    { text: "Berlin", correct: false },
+                    { text: "Madrid", correct: false }
+                ]
+            },
+            {
+                question: "What is 2 + 2?",
+                answers: [
+                    { text: "3", correct: false },
+                    { text: "4", correct: true },
+                    { text: "5", correct: false },
+                    { text: "6", correct: false }
+                ]
+            },
+            {
+                question: "Who wrote 'To Kill a Mockingbird'?",
+                answers: [
+                    { text: "Harper Lee", correct: true },
+                    { text: "Mark Twain", correct: false },
+                    { text: "Ernest Hemingway", correct: false },
+                    { text: "Jane Austen", correct: false }
+                ]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const questionContainer = document.getElementById("question-container");
+        const questionElement = document.getElementById("question");
+        const answerButtons = document.getElementById("answer-buttons");
+        const nextButton = document.getElementById("next-btn");
+        const resultContainer = document.getElementById("result-container");
+        const resultElement = document.getElementById("result");
+        const restartButton = document.getElementById("restart-btn");
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            resultContainer.style.display = "none";
+            nextButton.style.display = "block";
+            showQuestion();
+        }
+
+        function showQuestion() {
+            resetState();
+            const currentQuestion = questions[currentQuestionIndex];
+            questionElement.innerText = currentQuestion.question;
+
+            currentQuestion.answers.forEach(answer => {
+                const button = document.createElement("button");
+                button.innerText = answer.text;
+                button.classList.add("btn");
+                button.addEventListener("click", () => selectAnswer(answer));
+                answerButtons.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            nextButton.style.display = "none";
+            while (answerButtons.firstChild) {
+                answerButtons.removeChild(answerButtons.firstChild);
+            }
+        }
+
+        function selectAnswer(answer) {
+            if (answer.correct) {
+                score++;
+            }
+            nextButton.style.display = "block";
+        }
+
+        nextButton.addEventListener("click", () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        });
+
+        function showResult() {
+            questionContainer.style.display = "none";
+            resultContainer.style.display = "block";
+            resultElement.innerText = `You scored ${score} out of ${questions.length}`;
+            restartButton.style.display = "block";
+        }
+
+        restartButton.addEventListener("click", () => {
+            questionContainer.style.display = "block";
+            startQuiz();
+        });
+
+        startQuiz();
+    </script>
+</body>
+</html>
